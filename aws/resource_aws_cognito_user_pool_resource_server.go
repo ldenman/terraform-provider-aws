@@ -24,13 +24,24 @@ func resourceAwsCognitoUserPoolResourceServer() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			// "scopes": {
-			// 	Type:     schema.TypeList,
-			// 	Optional: true,
-			// 	Elem: &schema.Schema{
-			// 		Type: schema.TypeString,
-			// 	},
-			// },
+			"scopes": {
+				Type: schema.TypeList,
+				Optional: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"scope_name": {
+							Type:     schema.TypeString,
+							Required: true,
+							ForceNew: true,
+						},
+						"scope_description": {
+							Type:     schema.TypeString,
+							Required: true,
+							ForceNew: true,
+						},
+					},
+				},
+			},
 
 			"identifier": {
 				Type:     schema.TypeString,
@@ -61,9 +72,9 @@ func resourceAwsCognitoUserPoolResourceServerCreate(d *schema.ResourceData, meta
 		UserPoolId: aws.String(d.Get("user_pool_id").(string)),
 	}
 
-	// if v, ok := d.GetOk("scopes"); ok {
-	// 	params.Scopes = expandStringList(v.([]interface{}))
-	// }
+	if v, ok := d.GetOk("scopes"); ok {
+		params.Scopes = expandCognitoUserPoolResourceServerScopes(v.([]interface{}))
+	}
 
 	_, err := conn.CreateResourceServer(params)
 	if err != nil {

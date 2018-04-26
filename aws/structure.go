@@ -2699,6 +2699,23 @@ func flattenCognitoUserPoolPasswordPolicy(s *cognitoidentityprovider.PasswordPol
 	return []map[string]interface{}{}
 }
 
+func expandCognitoUserPoolResourceServerScopes(inputs []interface{}) []*cognitoidentityprovider.ResourceServerScopeType {
+	configs := make([]*cognitoidentityprovider.ResourceServerScopeType, len(inputs), len(inputs))
+	for i, input := range inputs {
+		param := input.(map[string]interface{})
+		config := &cognitoidentityprovider.ResourceServerScopeType{}
+		if v, ok := param["scope_description"]; ok {
+			config.ScopeDescription = aws.String(v.(string))
+		}
+		if v, ok := param["scope_name"]; ok {
+			config.ScopeName = aws.String(v.(string))
+		}
+
+		configs[i] = config
+	}
+	return configs
+}
+
 func expandCognitoUserPoolSchema(inputs []interface{}) []*cognitoidentityprovider.SchemaAttributeType {
 	configs := make([]*cognitoidentityprovider.SchemaAttributeType, len(inputs), len(inputs))
 
