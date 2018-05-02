@@ -3019,6 +3019,25 @@ func cognitoUserPoolSchemaAttributeMatchesStandardAttribute(input *cognitoidenti
 	return false
 }
 
+func flattenCognitoUserPoolResourceServerScopes(configuredAttributes, inputs []*cognitoidentityprovider.ResourceServerScopeType) []map[string]interface{} {
+	values := make([]map[string]interface{}, 0)
+
+	for _, input := range inputs {
+		if input == nil {
+			continue
+		}
+
+		var value = map[string]interface{}{
+			"ScopeDescription": input.ScopeDescription,
+			"ScopeName":        input.ScopeName,
+		}
+
+		values = append(values, value)
+	}
+
+	return values
+}
+
 func flattenCognitoUserPoolSchema(configuredAttributes, inputs []*cognitoidentityprovider.SchemaAttributeType) []map[string]interface{} {
 	values := make([]map[string]interface{}, 0)
 

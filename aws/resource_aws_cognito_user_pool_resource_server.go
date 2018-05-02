@@ -25,7 +25,7 @@ func resourceAwsCognitoUserPoolResourceServer() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"scopes": {
-				Type: schema.TypeList,
+				Type:     schema.TypeList,
 				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -108,9 +108,13 @@ func resourceAwsCognitoUserPoolResourceServerRead(d *schema.ResourceData, meta i
 	d.Set("user_pool_id", ip.UserPoolId)
 	d.Set("identifier", ip.Identifier)
 
-	// if err := d.Set("scopes", flattenStringList(ip.Scopes)); err != nil {
-	// 	return fmt.Errorf("[DEBUG] Error setting scopes error: %#v", err)
-	// }
+	var configuredScopes []interface{}
+	if v, ok := d.GetOk("scopes"); ok {
+		configuredScopes = v.(*schema.Set).List()
+	}
+	if err := d.Set("scopes", flattenCognitoUserPoolResourceServerScopes(expandCognitoUserPoolResourceServerScopes(configuredScopes), ret.ResourceServer.Scopes)); err != nil {
+		return fmt.Errorf("Failed setting scopes: %s", err)
+	}
 
 	return nil
 }
@@ -125,9 +129,9 @@ func resourceAwsCognitoUserPoolResourceServerUpdate(d *schema.ResourceData, meta
 		Name:       aws.String(d.Id()),
 	}
 
-	// if d.HasChange("scopes") {
-	// 	params.Scopes = expandStringList(d.Get("scopes").([]interface{}))
-	// }
+	if d.HasChange("scopes") {
+		params.Scopes = expandCognitoUserPoolResourceServerScopes(d.Get("scopes").([]interface{}))
+	}
 
 	_, err := conn.UpdateResourceServer(params)
 	if err != nil {
