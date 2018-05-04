@@ -3028,8 +3028,8 @@ func flattenCognitoUserPoolResourceServerScopes(configuredAttributes, inputs []*
 		}
 
 		var value = map[string]interface{}{
-			"ScopeDescription": input.ScopeDescription,
-			"ScopeName":        input.ScopeName,
+			"scope_description": aws.StringValue(input.ScopeDescription),
+			"scope_name":        aws.StringValue(input.ScopeName),
 		}
 
 		values = append(values, value)

@@ -25,19 +25,19 @@ func resourceAwsCognitoUserPoolResourceServer() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"scopes": {
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"scope_name": {
 							Type:     schema.TypeString,
 							Required: true,
-							ForceNew: true,
+							//ForceNew: true,
 						},
 						"scope_description": {
 							Type:     schema.TypeString,
 							Required: true,
-							ForceNew: true,
+							//ForceNew: true,
 						},
 					},
 				},
@@ -73,15 +73,15 @@ func resourceAwsCognitoUserPoolResourceServerCreate(d *schema.ResourceData, meta
 	}
 
 	if v, ok := d.GetOk("scopes"); ok {
-		params.Scopes = expandCognitoUserPoolResourceServerScopes(v.([]interface{}))
+		params.Scopes = expandCognitoUserPoolResourceServerScopes(v.(*schema.Set).List())
 	}
 
-	_, err := conn.CreateResourceServer(params)
+	resp, err := conn.CreateResourceServer(params)
 	if err != nil {
 		return fmt.Errorf("Error creating Cognito Resource Server: %s", err)
 	}
 
-	d.SetId(*name)
+	d.SetId(*resp.ResourceServer.Identifier)
 
 	return resourceAwsCognitoUserPoolResourceServerRead(d, meta)
 }
@@ -124,8 +124,8 @@ func resourceAwsCognitoUserPoolResourceServerUpdate(d *schema.ResourceData, meta
 	log.Print("[DEBUG] Updating Cognito Resource Server")
 
 	params := &cognitoidentityprovider.UpdateResourceServerInput{
-		UserPoolId: aws.String(d.Get("UserPoolId").(string)),
-		Identifier: aws.String(d.Get("Identifier").(string)),
+		UserPoolId: aws.String(d.Get("user_pool_id").(string)),
+		Identifier: aws.String(d.Get("identifier").(string)),
 		Name:       aws.String(d.Id()),
 	}
 
