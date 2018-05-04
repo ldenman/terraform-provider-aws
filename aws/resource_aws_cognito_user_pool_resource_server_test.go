@@ -125,7 +125,7 @@ func testAccCheckAWSCognitoUserPoolResourceServerExists(name string) resource.Te
 		}
 
 		if rs.Primary.ID == "" {
-			return errors.New("No Cognito User Pool ID set")
+			return errors.New("No Cognito Resource Server ID set")
 		}
 
 		conn := testAccProvider.Meta().(*AWSClient).cognitoidpconn

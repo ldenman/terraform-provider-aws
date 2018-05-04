@@ -32,12 +32,12 @@ func resourceAwsCognitoUserPoolResourceServer() *schema.Resource {
 						"scope_name": {
 							Type:     schema.TypeString,
 							Required: true,
-							//ForceNew: true,
+							ForceNew: true,
 						},
 						"scope_description": {
 							Type:     schema.TypeString,
 							Required: true,
-							//ForceNew: true,
+							ForceNew: true,
 						},
 					},
 				},
@@ -46,16 +46,19 @@ func resourceAwsCognitoUserPoolResourceServer() *schema.Resource {
 			"identifier": {
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 
 			"user_pool_id": {
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 		},
 	}
